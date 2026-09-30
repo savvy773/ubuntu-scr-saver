@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main class="screen-grid" aria-label="Clock and system dashboard">
+  <main class="screen-grid" aria-label="Clock, reflection and system dashboard">
     <section class="panel clock-panel" aria-label="Local clock">
       <header class="panel-heading"><span>LOCAL TIME</span><span>SEOUL</span></header>
       <div class="panel-content clock-content"><div class="clock-display" id="clockContainer">
@@ -23,6 +23,10 @@
       </div></div>
     </section>
 
+    <section class="panel quote-panel" aria-label="English reflection">
+      <div class="quote-content"><blockquote class="quote" id="quoteText" lang="en" aria-live="polite"></blockquote></div>
+    </section>
+
     <section class="panel monitor-panel" aria-label="System resource dashboard">
       <header class="panel-heading"><span>SYSTEM MONITOR</span><span id="liveLabel">CONNECTING</span></header>
       <div class="panel-content resource-list">
@@ -30,28 +34,28 @@
           <div class="resource-track"><div class="resource-fill" id="cpuBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-label">CPU</span><span class="resource-value" id="cpuValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-level" id="cpuLevel">CONNECTING</span><span class="resource-detail" id="cpuDetail">Processor usage</span></div>
+            <div class="resource-secondary"><span class="resource-detail" id="cpuDetail">Processor usage</span><span class="resource-level" id="cpuLevel">CONNECTING</span></div>
           </div>
         </div>
         <div class="resource-card resource-ram" data-level="offline">
           <div class="resource-track"><div class="resource-fill" id="ramBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-label">RAM</span><span class="resource-value" id="ramValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-level" id="ramLevel">CONNECTING</span><span class="resource-detail" id="ramDetail">Used / Total</span></div>
+            <div class="resource-secondary"><span class="resource-detail" id="ramDetail">Used / Total</span><span class="resource-level" id="ramLevel">CONNECTING</span></div>
           </div>
         </div>
         <div class="resource-card resource-disk" data-level="offline">
           <div class="resource-track"><div class="resource-fill" id="diskBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-label">SSD</span><span class="resource-value" id="diskValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-level" id="diskLevel">CONNECTING</span><span class="resource-detail" id="diskDetail">Used / Total</span></div>
+            <div class="resource-secondary"><span class="resource-detail" id="diskDetail">Used / Total</span><span class="resource-level" id="diskLevel">CONNECTING</span></div>
           </div>
         </div>
         <div class="resource-card resource-hdd" data-level="offline">
           <div class="resource-track"><div class="resource-fill" id="hddBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-label">HDD · 1 TB</span><span class="resource-value" id="hddValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-level" id="hddLevel">CONNECTING</span><span class="resource-detail" id="hddDetail">Used / Total</span></div>
+            <div class="resource-secondary"><span class="resource-detail" id="hddDetail">Used / Total</span><span class="resource-level" id="hddLevel">CONNECTING</span></div>
           </div>
         </div>
       </div>

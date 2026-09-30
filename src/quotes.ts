@@ -1,10 +1,10 @@
-import { quoteLibrary } from './quote-library';
+import { quoteLibrary } from './compact-quote-library';
 export const quotes = quoteLibrary.map(([text]) => text);
 
 const modals = new Set(['can', 'cannot', "can't", 'could', 'may', 'might', 'must', 'should', 'would', 'will', "won't"]);
 const helpers = new Set(['have', 'has', 'had', 'be', 'is', 'are', 'was', 'were', 'been', 'being']);
 const doHelpers = new Set(['do', 'does', 'did', "don't", "doesn't", "didn't"]);
-const adverbs = new Set(['not', 'never', 'already', 'just', 'still', 'also', 'often', 'sometimes', 'quietly', 'fully', 'carefully', 'eventually', 'usually', 'immediately', 'repeatedly']);
+const adverbs = new Set(['not', 'yet', 'never', 'already', 'just', 'still', 'also', 'often', 'sometimes', 'quietly', 'fully', 'carefully', 'eventually', 'usually', 'immediately', 'repeatedly']);
 const participles = new Set(['made', 'known', 'built', 'done', 'taught', 'gone', 'shown', 'seen', 'given', 'chosen', 'kept', 'lost', 'held', 'found', 'thought', 'become', 'understood', 'written', 'taken', 'grown', 'brought', 'left', 'read', 'begun']);
 const connectors = new Set(['because', 'although', 'while', 'whenever', 'when', 'if', 'unless', 'until', 'whether']);
 const prepositions = new Set(['in', 'on', 'at', 'of', 'for', 'from', 'with', 'without', 'by', 'to', 'into', 'through', 'during', 'within', 'beyond', 'between', 'among', 'toward', 'towards', 'against', 'across', 'under', 'over', 'upon', 'around', 'throughout', 'despite']);
@@ -44,40 +44,14 @@ function fitQuote(element: HTMLElement) {
   }
 }
 
-function lineBreak(text: string) {
-  const words = text.match(/\S+\s*/g) ?? [];
-  const target = text.length / 2;
-  const awkwardEnd = new Set(['a', 'an', 'the', 'of', 'to', 'with', 'in', 'on', 'for', 'and', 'or', 'your', 'their', ...modals, ...helpers]);
-  let best = 0;
-  let bestScore = Infinity;
-  for (let cut = 4; cut <= words.length - 4; cut++) {
-    const first = words.slice(0, cut).join('');
-    const second = words.slice(cut).join('');
-    let score = (first.trim().length - target) ** 2 + (second.trim().length - target) ** 2;
-    if (/[,;:]$/.test(first.trim())) score -= 120;
-    if (awkwardEnd.has(first.trim().split(/\s+/).at(-1)!.toLowerCase())) score += 180;
-    if (score < bestScore) {
-      bestScore = score;
-      best = first.length;
-    }
-  }
-  return best;
-}
-
 function renderQuote(element: HTMLElement, text: string, verbs: string) {
   const fragment = document.createDocumentFragment();
   const forms = new Set(verbs.split(' '));
   const tokens = text.match(/[A-Za-z]+(?:'[A-Za-z]+)?|[^A-Za-z]+/g) ?? [];
-  const split = lineBreak(text);
-  const lines = Array.from({ length: 2 }, () => {
-    const line = document.createElement('span');
-    line.className = 'quote-line';
-    fragment.append(line);
-    return line;
-  });
-  let offset = 0;
+  const line = document.createElement('span');
+  line.className = 'quote-line';
+  fragment.append(line);
   for (const [index, token] of tokens.entries()) {
-    const line = lines[offset >= split ? 1 : 0];
     const word = token.toLowerCase();
     let kind = '';
     if (forms.has(word)) kind = isAuxiliary(word, index, tokens, forms) ? 'auxiliary' : 'main-verb';
@@ -91,8 +65,8 @@ function renderQuote(element: HTMLElement, text: string, verbs: string) {
     } else {
       line.append(document.createTextNode(token));
     }
-    offset += token.length;
   }
+  element.title = text;
   element.replaceChildren(fragment);
   requestAnimationFrame(() => fitQuote(element));
 }
@@ -103,7 +77,7 @@ document.fonts.ready.then(() => fitQuote(quoteElement));
 
 (() => {
   const intervalMs = 10 * 60 * 1000;
-  const storageKey = 'screensaver-reflections-v2';
+  const storageKey = 'screensaver-reflections-compact-v3';
   const quoteEl = document.getElementById('quoteText')!;
   let timer: ReturnType<typeof setTimeout>;
   let state: { order: number[]; position: number; nextChangeAt: number } =
@@ -151,9 +125,6 @@ document.fonts.ready.then(() => fitQuote(quoteElement));
     const text = `“${quotes[state.order[state.position]]}”`;
     if (quoteEl.textContent !== text) {
       renderQuote(quoteEl, text, quoteLibrary[state.order[state.position]][1]);
-      quoteEl.classList.remove('changing');
-      void quoteEl.offsetWidth;
-      quoteEl.classList.add('changing');
     }
 
     try {

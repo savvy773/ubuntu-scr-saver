@@ -1,7 +1,7 @@
 # ubuntu-scr-saver
 
-A modern Ubuntu screensaver with a large clock and a compact live resource
-dashboard. Built with Vite 8.3.1, TypeScript 7.0.2, and a Python standard-library
+A modern Ubuntu screensaver with a balanced clock, a subtle single-line English
+reflection, and a compact live resource dashboard. Built with Vite 8.3.1, TypeScript 7.0.2, and a Python standard-library
 resource server.
 
 ## Stack actually used
@@ -17,16 +17,17 @@ Verified against the npm registry on 2026-09-30:
 
 `npm run build` runs the TypeScript check and Vite build. The Python service
 serves the resulting assets from `dist/`; `index.html` imports `src/main.ts`,
-which connects the clock and resource dashboard modules.
+which connects the clock, quote rotation, and resource dashboard modules.
 The exact dependency versions are pinned in `package.json` and `package-lock.json`.
 Versions are fixed for reproducibility; rerun `npm view vite version` and
 `npm view typescript version` before updating them in the future.
 
 ![Screensaver preview](docs/preview.png)
 
-A large, centered clock occupies the upper area. Four resource cards sit below
-it in one row, switching to a two-by-two grid on narrower displays. The dark
-layout uses restrained accents and generous margins for use in the workplace.
+A moderately sized clock occupies the upper area, with a readable single-line
+English reflection in the center. Four resource cards sit below in one row,
+switching to a two-by-two grid on narrower displays. The dark layout uses
+restrained accents and generous margins.
 
 ## Install
 
@@ -53,20 +54,28 @@ After moving an installed folder, run `./install.sh` again to update paths.
 
 - CPU utilization, RAM usage, system disk `/`, and the 1 TB HDD at `/mnt/data`.
 - Used and total capacity in GiB and percentages.
-- One vertical usage bar per resource, smoothly updated without clearing readings.
-- Bars sit on the left; colored resource labels sit beside right-aligned percentages.
+- One wide, high-contrast vertical usage gauge per resource, with quarter-scale marks.
+- Readings update smoothly without clearing the previous values.
+- Wide gauges sit on the right; colored labels, prominent percentages, and capacity
+  readings fill the remaining card space. Capacity details sit directly below
+  each percentage, followed by the status label.
 - Green indicates normal usage, amber watch, and red high usage; labels accompany colors.
 - Watch/high defaults: CPU 60/85%, RAM 75/90%, both disks 80/90%.
 - Resource readings refresh three seconds after each completed request.
 - Memory usage excludes available memory; disk percentages match `df`.
 - A disconnected HDD shows as unavailable instead of reporting the root disk.
-- Large clock with date, seconds, and AM/PM; subtle position shifts.
+- Balanced clock with date, seconds, and AM/PM; subtle position shifts.
+- A centered one-line English reflection, randomly rotated every ten minutes.
+- 120 shorter original passages, shuffled without repeats within each cycle.
+- Subtle pastel highlights for auxiliary verbs, main verbs, conjunctions, and prepositions.
 - Responsive clock and resource card layout.
 - Visible mouse pointer and keyboard-only exit.
 
-Quotes are currently hidden. The 180 original English reflections and their
-rotation/highlighting code remain in `src/quote-library.ts` and `src/quotes.ts`
-for later use, but are not imported or included in the active screen.
+The active compact library is `src/compact-quote-library.ts`; the earlier long
+reflections remain in `src/quote-library.ts` for later use. The quote sequence
+and rotation deadline persist across launches. Reflections
+use adaptive sizing to stay on one line; very narrow displays truncate overflow
+with an ellipsis and retain the full passage in the tooltip.
 
 Resource readings work locally. Google Fonts load when available; system fonts
 provide an offline fallback.
