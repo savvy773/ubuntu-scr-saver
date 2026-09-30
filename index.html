@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="google" content="notranslate">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>scr-saver · System Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="screen-grid" aria-label="Three-section screensaver">
+    <section class="panel monitor-panel" aria-label="System monitoring, upper left">
+      <header class="panel-heading"><span>SYSTEM MONITOR</span><span id="liveLabel">CONNECTING</span></header>
+      <div class="panel-content resource-list">
+        <div class="resource-card resource-cpu" data-level="offline">
+          <div class="resource-track"><div class="resource-fill" id="cpuBar"></div></div>
+          <div class="resource-readout">
+            <div class="resource-primary"><span class="resource-label">CPU</span><span class="resource-value" id="cpuValue">—</span></div>
+            <div class="resource-secondary"><span class="resource-level" id="cpuLevel">CONNECTING</span><span class="resource-detail" id="cpuDetail">Processor usage</span></div>
+          </div>
+        </div>
+        <div class="resource-card resource-ram" data-level="offline">
+          <div class="resource-track"><div class="resource-fill" id="ramBar"></div></div>
+          <div class="resource-readout">
+            <div class="resource-primary"><span class="resource-label">RAM</span><span class="resource-value" id="ramValue">—</span></div>
+            <div class="resource-secondary"><span class="resource-level" id="ramLevel">CONNECTING</span><span class="resource-detail" id="ramDetail">Used / Total</span></div>
+          </div>
+        </div>
+        <div class="resource-card resource-disk" data-level="offline">
+          <div class="resource-track"><div class="resource-fill" id="diskBar"></div></div>
+          <div class="resource-readout">
+            <div class="resource-primary"><span class="resource-label">SSD</span><span class="resource-value" id="diskValue">—</span></div>
+            <div class="resource-secondary"><span class="resource-level" id="diskLevel">CONNECTING</span><span class="resource-detail" id="diskDetail">Used / Total</span></div>
+          </div>
+        </div>
+        <div class="resource-card resource-hdd" data-level="offline">
+          <div class="resource-track"><div class="resource-fill" id="hddBar"></div></div>
+          <div class="resource-readout">
+            <div class="resource-primary"><span class="resource-label">HDD · 1 TB</span><span class="resource-value" id="hddValue">—</span></div>
+            <div class="resource-secondary"><span class="resource-level" id="hddLevel">CONNECTING</span><span class="resource-detail" id="hddDetail">Used / Total</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="resource-status" id="resourceStatus" aria-live="polite"></div>
+    </section>
+
+    <section class="panel clock-panel" aria-label="Clock, upper right">
+      <header class="panel-heading"><span>LOCAL TIME</span><span>SEOUL</span></header>
+      <div class="panel-content clock-content"><div class="clock-display" id="clockContainer">
+        <div class="date-row"><span id="dateText"></span><span class="day-badge" id="dayBadge"></span></div>
+        <div class="time-row">
+          <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span>
+          <div class="seconds-wrap"><span id="seconds">00</span><span class="ampm" id="ampm">AM</span></div>
+        </div>
+        <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+      </div></div>
+    </section>
+
+    <section class="panel quote-panel" aria-label="English quote across the bottom">
+      <header class="panel-heading"><span>WORDS OF WISDOM</span><span>10 MIN</span></header>
+      <div class="panel-content quote-content"><blockquote class="quote" id="quoteText" lang="en" aria-live="polite"></blockquote></div>
+    </section>
+  </main>
+  <div class="guide-hint">키보드를 누르면 종료됩니다</div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
