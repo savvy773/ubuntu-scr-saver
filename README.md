@@ -58,7 +58,8 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - Readings update smoothly without clearing the previous values.
 - Larger colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
 - A unified monitoring panel uses four aligned cells with subtle dividers.
-- Wide gauges sit directly beside right-aligned percentages. Capacity details sit directly below each percentage.
+- Percentages and gauges form a centered group with comfortable spacing.
+- Distinct processor, memory, solid-state drive, and hard-drive icons identify the resources. Capacity details sit directly below each percentage.
 - Both percentages and gauges use green for normal usage, amber for watch, and
   red for high usage; status labels accompany the colors.
 - Watch/high defaults: CPU 60/85%, RAM 75/90%, both disks 80/90%.
