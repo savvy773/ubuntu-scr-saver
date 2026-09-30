@@ -1,8 +1,8 @@
 # ubuntu-scr-saver
 
-A modern Ubuntu screensaver with live resource monitoring, a clock, and
-180 English reflections. Built with Vite 8.3.1, TypeScript 7.0.2, and a Python
-standard-library resource server.
+A modern Ubuntu screensaver with a large clock and a compact live resource
+dashboard. Built with Vite 8.3.1, TypeScript 7.0.2, and a Python standard-library
+resource server.
 
 ## Stack actually used
 
@@ -17,15 +17,16 @@ Verified against the npm registry on 2026-09-30:
 
 `npm run build` runs the TypeScript check and Vite build. The Python service
 serves the resulting assets from `dist/`; `index.html` imports `src/main.ts`,
-which connects the clock, quote rotation, and resource dashboard modules.
+which connects the clock and resource dashboard modules.
 The exact dependency versions are pinned in `package.json` and `package-lock.json`.
 Versions are fixed for reproducibility; rerun `npm view vite version` and
 `npm view typescript version` before updating them in the future.
 
 ![Screensaver preview](docs/preview.png)
 
-The screen has three rectangular sections: monitoring in the upper left,
-the clock in the upper right, and a large quote across the full lower half.
+A large, centered clock occupies the upper area. Four resource cards sit below
+it in one row, switching to a two-by-two grid on narrower displays. The dark
+layout uses restrained accents and generous margins for use in the workplace.
 
 ## Install
 
@@ -59,22 +60,16 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - Resource readings refresh three seconds after each completed request.
 - Memory usage excludes available memory; disk percentages match `df`.
 - A disconnected HDD shows as unavailable instead of reporting the root disk.
-- Small clock with date, seconds, and AM/PM; subtle position shifts.
-- Large English reflection every ten minutes, with 180 passages shuffled per cycle.
-- Each passage contains 20–27 words, written for intermediate to advanced readers.
-- Each passage is balanced into two lines, with adaptive sizing to fit the area.
-- Auxiliary verbs are pastel green; main verbs are warm yellow-orange.
-- Conjunctions such as "because", "while", and "although" are pastel lavender.
-- Common prepositions are pastel sky blue; infinitive "to" stays neutral.
-- The quote sequence and deadline persist in the dedicated Chrome profile.
-- Responsive layout retains the three sections on smaller displays.
+- Large clock with date, seconds, and AM/PM; subtle position shifts.
+- Responsive clock and resource card layout.
+- Visible mouse pointer and keyboard-only exit.
 
-The passages are original reflections, without claims of attribution to famous authors.
-Verb forms are curated per passage. A lightweight rule distinguishes auxiliary
-uses of have/be from linking or possessive main verbs. The highlights are a
-reading aid rather than a complete grammatical annotation of every word.
-Resource readings and sayings work locally. Google Fonts load when available;
-system fonts provide an offline fallback.
+Quotes are currently hidden. The 180 original English reflections and their
+rotation/highlighting code remain in `src/quote-library.ts` and `src/quotes.ts`
+for later use, but are not imported or included in the active screen.
+
+Resource readings work locally. Google Fonts load when available; system fonts
+provide an offline fallback.
 
 ## Commands
 

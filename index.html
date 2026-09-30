@@ -10,8 +10,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main class="screen-grid" aria-label="Three-section screensaver">
-    <section class="panel monitor-panel" aria-label="System monitoring, upper left">
+  <main class="screen-grid" aria-label="Clock and system dashboard">
+    <section class="panel clock-panel" aria-label="Local clock">
+      <header class="panel-heading"><span>LOCAL TIME</span><span>SEOUL</span></header>
+      <div class="panel-content clock-content"><div class="clock-display" id="clockContainer">
+        <div class="date-row"><span id="dateText"></span><span class="day-badge" id="dayBadge"></span></div>
+        <div class="time-row">
+          <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span>
+          <div class="seconds-wrap"><span id="seconds">00</span><span class="ampm" id="ampm">AM</span></div>
+        </div>
+        <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+      </div></div>
+    </section>
+
+    <section class="panel monitor-panel" aria-label="System resource dashboard">
       <header class="panel-heading"><span>SYSTEM MONITOR</span><span id="liveLabel">CONNECTING</span></header>
       <div class="panel-content resource-list">
         <div class="resource-card resource-cpu" data-level="offline">
@@ -46,22 +58,6 @@
       <div class="resource-status" id="resourceStatus" aria-live="polite"></div>
     </section>
 
-    <section class="panel clock-panel" aria-label="Clock, upper right">
-      <header class="panel-heading"><span>LOCAL TIME</span><span>SEOUL</span></header>
-      <div class="panel-content clock-content"><div class="clock-display" id="clockContainer">
-        <div class="date-row"><span id="dateText"></span><span class="day-badge" id="dayBadge"></span></div>
-        <div class="time-row">
-          <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span>
-          <div class="seconds-wrap"><span id="seconds">00</span><span class="ampm" id="ampm">AM</span></div>
-        </div>
-        <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
-      </div></div>
-    </section>
-
-    <section class="panel quote-panel" aria-label="English quote across the bottom">
-      <header class="panel-heading"><span>WORDS OF WISDOM</span><span>10 MIN</span></header>
-      <div class="panel-content quote-content"><blockquote class="quote" id="quoteText" lang="en" aria-live="polite"></blockquote></div>
-    </section>
   </main>
   <div class="guide-hint">키보드를 누르면 종료됩니다</div>
   <script type="module" src="/src/main.ts"></script>
