@@ -58,7 +58,7 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - Readings update smoothly without clearing the previous values.
 - Larger colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
 - A unified monitoring panel uses four aligned cells with subtle dividers.
-- Percentages and gauges form a centered group with comfortable spacing.
+- Percentages and gauges form a centered group with a 50-pixel gap.
 - Distinct processor, memory, solid-state drive, and hard-drive icons identify the resources. Capacity details sit directly below each percentage.
 - Both percentages and gauges use green for normal usage, amber for watch, and
   red for high usage; status labels accompany the colors.
@@ -66,7 +66,7 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - Resource readings refresh three seconds after each completed request.
 - Memory usage excludes available memory; disk percentages match `df`.
 - A disconnected HDD shows as unavailable instead of reporting the root disk.
-- Balanced clock with date, seconds, and AM/PM; subtle position shifts.
+- Rounded Nunito clock with date, seconds, and AM/PM; subtle position shifts.
 - A centered two-line English reflection with larger adaptive text, randomly
   rotated every ten minutes.
 - 120 shorter original passages, shuffled without repeats within each cycle.
