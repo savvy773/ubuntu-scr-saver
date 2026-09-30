@@ -56,16 +56,17 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - Used and total capacity in GiB and percentages.
 - One wide, high-contrast vertical usage gauge per resource, with quarter-scale marks.
 - Readings update smoothly without clearing the previous values.
-- Colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
-- Wide gauges sit on the right; prominent percentages and capacity readings fill
-  the remaining card space. Capacity details sit directly below each percentage.
+- Larger colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
+- Taller resource cards have wide gauges on the right, just 8 pixels from the
+  right-aligned percentages. Capacity details sit directly below each percentage.
 - Green indicates normal usage, amber watch, and red high usage; labels accompany colors.
 - Watch/high defaults: CPU 60/85%, RAM 75/90%, both disks 80/90%.
 - Resource readings refresh three seconds after each completed request.
 - Memory usage excludes available memory; disk percentages match `df`.
 - A disconnected HDD shows as unavailable instead of reporting the root disk.
 - Balanced clock with date, seconds, and AM/PM; subtle position shifts.
-- A centered one-line English reflection, randomly rotated every ten minutes.
+- A centered one-line English reflection with larger adaptive text, randomly
+  rotated every ten minutes.
 - 120 shorter original passages, shuffled without repeats within each cycle.
 - Subtle pastel highlights for auxiliary verbs, main verbs, conjunctions, and prepositions.
 - Responsive clock and resource card layout.
