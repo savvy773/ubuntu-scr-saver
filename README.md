@@ -1,6 +1,6 @@
 # ubuntu-scr-saver
 
-A modern Ubuntu screensaver with a balanced clock, a subtle single-line English
+A modern Ubuntu screensaver with a balanced clock, a balanced two-line English
 reflection, and a compact live resource dashboard. Built with Vite 8.3.1, TypeScript 7.0.2, and a Python standard-library
 resource server.
 
@@ -24,9 +24,9 @@ Versions are fixed for reproducibility; rerun `npm view vite version` and
 
 ![Screensaver preview](docs/preview.png)
 
-A moderately sized clock occupies the upper area, with a readable single-line
-English reflection in the center. Four resource cards sit below in one row,
-switching to a two-by-two grid on narrower displays. The dark layout uses
+A moderately sized clock occupies the upper area, with a larger two-line
+English reflection in the center. The lower monitoring panel groups four resource
+cells in one row, switching to a two-by-two grid on narrower displays. The dark layout uses
 restrained accents and generous margins.
 
 ## Install
@@ -57,15 +57,16 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - One wide, high-contrast vertical usage gauge per resource, with quarter-scale marks.
 - Readings update smoothly without clearing the previous values.
 - Larger colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
-- Taller resource cards have wide gauges on the right, just 8 pixels from the
-  right-aligned percentages. Capacity details sit directly below each percentage.
-- Green indicates normal usage, amber watch, and red high usage; labels accompany colors.
+- A unified monitoring panel uses four aligned cells with subtle dividers.
+- Wide gauges sit directly beside right-aligned percentages. Capacity details sit directly below each percentage.
+- Both percentages and gauges use green for normal usage, amber for watch, and
+  red for high usage; status labels accompany the colors.
 - Watch/high defaults: CPU 60/85%, RAM 75/90%, both disks 80/90%.
 - Resource readings refresh three seconds after each completed request.
 - Memory usage excludes available memory; disk percentages match `df`.
 - A disconnected HDD shows as unavailable instead of reporting the root disk.
 - Balanced clock with date, seconds, and AM/PM; subtle position shifts.
-- A centered one-line English reflection with larger adaptive text, randomly
+- A centered two-line English reflection with larger adaptive text, randomly
   rotated every ten minutes.
 - 120 shorter original passages, shuffled without repeats within each cycle.
 - Subtle pastel highlights for auxiliary verbs, main verbs, conjunctions, and prepositions.
@@ -75,7 +76,7 @@ After moving an installed folder, run `./install.sh` again to update paths.
 The active compact library is `src/compact-quote-library.ts`; the earlier long
 reflections remain in `src/quote-library.ts` for later use. The quote sequence
 and rotation deadline persist across launches. Reflections
-use adaptive sizing to stay on one line; very narrow displays truncate overflow
+use balanced word-boundary breaks and adaptive sizing to stay on two lines; very narrow displays truncate overflow
 with an ellipsis and retain the full passage in the tooltip.
 
 Resource readings work locally. Google Fonts load when available; system fonts

@@ -44,14 +44,39 @@ function fitQuote(element: HTMLElement) {
   }
 }
 
+function quoteSplit(text: string) {
+  const words = text.match(/\S+\s*/g) ?? [];
+  const awkwardEnd = new Set(['a', 'an', 'the', 'of', 'to', 'with', 'in', 'on', 'for', 'and', 'or', 'your', 'their', ...modals, ...helpers]);
+  let best = 0;
+  let bestScore = Infinity;
+  for (let cut = 4; cut <= words.length - 4; cut++) {
+    const first = words.slice(0, cut).join('');
+    const second = words.slice(cut).join('');
+    let score = (first.trim().length - second.trim().length) ** 2;
+    if (/[,;:]$/.test(first.trim())) score -= 80;
+    if (awkwardEnd.has(first.trim().split(/\s+/).at(-1)!.toLowerCase())) score += 180;
+    if (score < bestScore) {
+      bestScore = score;
+      best = first.length;
+    }
+  }
+  return best;
+}
+
 function renderQuote(element: HTMLElement, text: string, verbs: string) {
   const fragment = document.createDocumentFragment();
   const forms = new Set(verbs.split(' '));
   const tokens = text.match(/[A-Za-z]+(?:'[A-Za-z]+)?|[^A-Za-z]+/g) ?? [];
-  const line = document.createElement('span');
-  line.className = 'quote-line';
-  fragment.append(line);
+  const split = quoteSplit(text);
+  const lines = Array.from({ length: 2 }, () => {
+    const line = document.createElement('span');
+    line.className = 'quote-line';
+    fragment.append(line);
+    return line;
+  });
+  let offset = 0;
   for (const [index, token] of tokens.entries()) {
+    const line = lines[offset >= split ? 1 : 0];
     const word = token.toLowerCase();
     let kind = '';
     if (forms.has(word)) kind = isAuxiliary(word, index, tokens, forms) ? 'auxiliary' : 'main-verb';
@@ -65,6 +90,7 @@ function renderQuote(element: HTMLElement, text: string, verbs: string) {
     } else {
       line.append(document.createTextNode(token));
     }
+    offset += token.length;
   }
   element.title = text;
   element.replaceChildren(fragment);
