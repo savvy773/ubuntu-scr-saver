@@ -28,7 +28,7 @@
     </section>
 
     <section class="panel monitor-panel" aria-label="System resource dashboard">
-      <header class="panel-heading"><span>SYSTEM MONITOR</span><span id="liveLabel">CONNECTING</span></header>
+      <header class="panel-heading"><span>SYSTEM MONITOR</span><div class="monitor-tools"><span id="liveLabel">CONNECTING</span><button class="maintenance-toggle" id="maintenanceOpen" type="button">캐시 관리</button></div></header>
       <div class="panel-content resource-list">
         <div class="resource-card resource-cpu" data-level="offline">
           <div class="resource-heading"><span class="resource-label"><svg class="resource-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 3v3m6-3v3M9 18v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3"/></svg><span>CPU</span></span><span class="resource-level" id="cpuLevel">CONNECTING</span></div>
@@ -46,7 +46,11 @@
           <div class="resource-track"><div class="resource-fill" id="ramBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-value" id="ramValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-detail" id="ramDetail" title="사용량 / 전체 용량">Used / Total</span></div>
+            <div class="resource-secondary"><div class="resource-detail" id="ramDetail">
+              <div class="capacity-row capacity-used"><span class="capacity-label">사용</span><span class="capacity-amount" id="ramUsed">—</span></div>
+              <div class="capacity-row capacity-remaining"><span class="capacity-label">잔여</span><span class="capacity-amount" id="ramRemaining">—</span></div>
+              <span class="capacity-unavailable">드라이브 연결 안 됨</span>
+            </div></div>
           </div>
           </div>
         </div>
@@ -56,7 +60,11 @@
           <div class="resource-track"><div class="resource-fill" id="diskBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-value" id="diskValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-detail" id="diskDetail" title="사용량 / 전체 용량">Used / Total</span></div>
+            <div class="resource-secondary"><div class="resource-detail" id="diskDetail">
+              <div class="capacity-row capacity-used"><span class="capacity-label">사용</span><span class="capacity-amount" id="diskUsed">—</span></div>
+              <div class="capacity-row capacity-remaining"><span class="capacity-label">잔여</span><span class="capacity-amount" id="diskRemaining">—</span></div>
+              <span class="capacity-unavailable">드라이브 연결 안 됨</span>
+            </div></div>
           </div>
           </div>
         </div>
@@ -66,7 +74,11 @@
           <div class="resource-track"><div class="resource-fill" id="hddBar"></div></div>
           <div class="resource-readout">
             <div class="resource-primary"><span class="resource-value" id="hddValue">—</span></div>
-            <div class="resource-secondary"><span class="resource-detail" id="hddDetail" title="사용량 / 전체 용량">Used / Total</span></div>
+            <div class="resource-secondary"><div class="resource-detail" id="hddDetail">
+              <div class="capacity-row capacity-used"><span class="capacity-label">사용</span><span class="capacity-amount" id="hddUsed">—</span></div>
+              <div class="capacity-row capacity-remaining"><span class="capacity-label">잔여</span><span class="capacity-amount" id="hddRemaining">—</span></div>
+              <span class="capacity-unavailable">드라이브 연결 안 됨</span>
+            </div></div>
           </div>
           </div>
         </div>
@@ -75,6 +87,25 @@
     </section>
 
   </main>
+  <dialog class="maintenance-dialog" id="maintenanceDialog" aria-labelledby="maintenanceTitle">
+    <header class="maintenance-heading"><div><p class="maintenance-eyebrow">MANUAL MAINTENANCE</p><h2 id="maintenanceTitle">캐시 관리</h2></div><button class="maintenance-close" id="maintenanceClose" type="button" aria-label="닫기">×</button></header>
+    <div class="maintenance-tabs" aria-label="정리 대상">
+      <button type="button" data-cache-target="ram" aria-pressed="false">RAM</button>
+      <button type="button" data-cache-target="ssd" aria-pressed="true">SSD</button>
+      <button type="button" data-cache-target="hdd" aria-pressed="false">HDD</button>
+    </div>
+    <p class="maintenance-description" id="maintenanceDescription"></p>
+    <label class="maintenance-field" id="maintenancePathField" hidden>HDD 캐시 폴더<input id="maintenancePath" type="text" placeholder="예: /mnt/data/.cache/thumbnails" autocomplete="off" spellcheck="false"></label>
+    <label class="maintenance-field" id="maintenanceAgeField">정리할 파일<select id="maintenanceAge"><option value="7">7일 이상 지난 캐시</option><option value="30">30일 이상 지난 캐시</option><option value="0">전체 캐시 파일</option></select></label>
+    <button class="maintenance-preview" id="maintenancePreview" type="button">정리 대상 확인</button>
+    <section class="maintenance-summary" id="maintenanceSummary" hidden>
+      <div class="maintenance-estimate" id="maintenanceEstimate"></div><ul class="maintenance-paths" id="maintenancePaths"></ul>
+      <label class="maintenance-confirm"><input id="maintenanceConfirm" type="checkbox">표시된 대상의 정리를 확인했습니다</label>
+      <button class="maintenance-execute" id="maintenanceExecute" type="button" disabled>확인 후 정리</button>
+    </section>
+    <p class="maintenance-status" id="maintenanceStatus" role="status"></p>
+    <p class="maintenance-hint">ESC로 창 닫기 · 정리는 이 창에서 직접 실행합니다</p>
+  </dialog>
   <div class="guide-hint">키보드를 누르면 종료됩니다</div>
   <script type="module" src="/src/main.ts"></script>
 </body>

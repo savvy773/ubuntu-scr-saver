@@ -1,5 +1,5 @@
 export {};
-type Resource = { percent: number; used: number; total: number; available?: boolean };
+type Resource = { percent: number; used: number; total: number; remaining?: number; available?: boolean };
 type ResourceName = 'cpu' | 'ram' | 'disk' | 'hdd';
 type Resources = Record<ResourceName, Resource> & { frontendVersion: string };
 const names: ResourceName[] = ['cpu', 'ram', 'disk', 'hdd'];
@@ -11,12 +11,18 @@ const thresholds: Record<ResourceName, [number, number]> = {
   const statusEl = document.getElementById('resourceStatus')!;
   const liveEl = document.getElementById('liveLabel')!;
   let frontendVersion: string | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let updating = false;
+  let refreshRequested = false;
   const gib = (bytes: number) => (bytes / (1024 ** 3)).toFixed(1);
   function setText(element: HTMLElement, value: string) {
     if (element.textContent !== value) element.textContent = value;
   }
 
   async function updateResources() {
+    if (updating) { refreshRequested = true; return; }
+    clearTimeout(timer);
+    updating = true;
     try {
       const response = await fetch('/api/resources', {
         cache: 'no-store', signal: AbortSignal.timeout(2500)
@@ -38,7 +44,10 @@ const thresholds: Record<ResourceName, [number, number]> = {
           card.style.setProperty('--usage', '0');
           setText(levelEl, 'OFFLINE');
           setText(valueEl, '—');
-          setText(document.getElementById(`${name}Detail`)!, '드라이브 연결 안 됨');
+          const detail = document.getElementById(`${name}Detail`)!;
+          detail.dataset.unavailable = 'true';
+          setText(document.getElementById(`${name}Used`)!, '—');
+          setText(document.getElementById(`${name}Remaining`)!, '—');
           continue;
         }
         const [warning, high] = thresholds[name];
@@ -49,7 +58,14 @@ const thresholds: Record<ResourceName, [number, number]> = {
         setText(levelEl, { normal: 'NORMAL', warning: 'WATCH', high: 'HIGH' }[level]);
         card.title = `주의 ${warning}% · 높음 ${high}%`;
         setText(valueEl, `${resource.percent.toFixed(1)}%`);
-        if (name !== 'cpu') setText(document.getElementById(`${name}Detail`)!, `${gib(resource.used)} / ${gib(resource.total)} GiB`);
+        if (name !== 'cpu') {
+          const detail = document.getElementById(`${name}Detail`)!;
+          delete detail.dataset.unavailable;
+          setText(document.getElementById(`${name}Used`)!, `${gib(resource.used)} GiB`);
+          setText(document.getElementById(`${name}Remaining`)!,
+            resource.remaining === undefined ? '—' : `${gib(resource.remaining)} GiB`);
+          detail.title = `전체 ${gib(resource.total)} GiB`;
+        }
       }
       setText(statusEl, '');
       setText(liveEl, 'LIVE');
@@ -60,8 +76,11 @@ const thresholds: Record<ResourceName, [number, number]> = {
       liveEl.classList.remove('live');
       setText(statusEl, '최근 수치를 표시 중 · 연결 재시도');
     } finally {
-      setTimeout(updateResources, 3000);
+      updating = false;
+      timer = setTimeout(updateResources, refreshRequested ? 0 : 3000);
+      refreshRequested = false;
     }
   }
+  window.addEventListener('resources:refresh', updateResources);
   updateResources();
 })();

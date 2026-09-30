@@ -9,7 +9,6 @@ export {};
     const dateTextEl = document.getElementById('dateText')!;
     const dayBadgeEl = document.getElementById('dayBadge')!;
     const progressBarEl = document.getElementById('progressBar')!;
-    const containerEl = document.getElementById('clockContainer')!;
 
     function setText(element: HTMLElement, text: string) {
       if (element.textContent !== text) element.textContent = text;
@@ -46,19 +45,6 @@ export {};
     setInterval(updateTime, 1000);
     updateTime();
 
-    // 번인(Burn-in) 방지: 1분마다 위치를 미세하게 이동 (Pixel Shift)
-    function shiftPixel() {
-      const parent = containerEl.parentElement!;
-      const maxX = Math.min(10, Math.max(0, (parent.clientWidth - containerEl.offsetWidth) / 2 - 12));
-      const maxY = Math.min(10, Math.max(0, (parent.clientHeight - containerEl.offsetHeight) / 2 - 12));
-      const offsetX = (Math.random() - 0.5) * maxX * 2;
-      const offsetY = (Math.random() - 0.5) * maxY * 2;
-      containerEl.style.transform = `translate(${offsetX.toFixed(1)}px, ${offsetY.toFixed(1)}px)`;
-    }
-    setInterval(shiftPixel, 60000);
-    window.addEventListener('resize', shiftPixel);
-    shiftPixel();
-
     // 시작 직후의 키 입력을 무시하고, 키보드 입력으로만 종료합니다.
     let ready = false;
 
@@ -67,7 +53,7 @@ export {};
     }, 800);
 
     function exitScreensaver() {
-      if (!ready) return;
+      if (!ready || document.querySelector('dialog[open]')) return;
       window.close();
     }
 

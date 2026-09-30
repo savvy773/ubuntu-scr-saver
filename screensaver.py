@@ -11,6 +11,7 @@ import subprocess
 import argparse
 import signal
 import json
+import hmac
 import mimetypes
 import shutil
 import threading
@@ -18,6 +19,7 @@ import urllib.request
 from urllib.parse import unquote, urlsplit
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from maintenance import CacheMaintenance
 
 BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR / "dist"
@@ -40,11 +42,11 @@ class ResourceMonitor:
     @staticmethod
     def disk_snapshot(path):
         if path != "/" and not os.path.ismount(path):
-            return {"available": False, "percent": 0, "used": 0, "total": 0, "path": path}
+            return {"available": False, "percent": 0, "used": 0, "total": 0, "remaining": 0, "path": path}
         disk = shutil.disk_usage(path)
         # Match df: reserved blocks are excluded from available space.
         return {"available": True, "percent": round(100 * disk.used / (disk.used + disk.free), 1),
-                "used": disk.used, "total": disk.total, "path": path}
+                "used": disk.used, "total": disk.total, "remaining": disk.free, "path": path}
 
     def snapshot(self):
         with self.lock:
@@ -66,7 +68,7 @@ class ResourceMonitor:
             "frontendVersion": str((WEB_DIR / "index.html").stat().st_mtime_ns),
             "cpu": {"percent": round(max(0, min(100, cpu_percent)), 1)},
             "ram": {"percent": round(100 * ram_used / ram_total, 1),
-                    "used": ram_used, "total": ram_total},
+                    "used": ram_used, "total": ram_total, "remaining": memory["MemAvailable"]},
             "disk": self.disk_snapshot("/"),
             "hdd": self.disk_snapshot("/mnt/data"),
         }
@@ -77,10 +79,32 @@ def start_resource_server(allow_reuse=True):
     if not (WEB_DIR / "index.html").is_file():
         raise RuntimeError(f"Dashboard build missing. Run npm run build in {BASE_DIR}")
     monitor = ResourceMonitor()
+    maintenance = CacheMaintenance()
 
     class Handler(BaseHTTPRequestHandler):
+        def json_response(self, status, payload):
+            body = json.dumps(payload).encode()
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
+            self.wfile.write(body)
+
+        def trusted_host(self):
+            return self.headers.get('Host') in ('127.0.0.1:8767', 'localhost:8767')
+
         def do_GET(self):
+            if not self.trusted_host():
+                self.json_response(403, {'error': 'Local requests only'})
+                return
             route = unquote(urlsplit(self.path).path)
+            if route == '/api/maintenance':
+                try:
+                    self.json_response(200, maintenance.info())
+                except OSError:
+                    self.json_response(503, {'error': '캐시 정보를 읽을 수 없습니다'})
+                return
             if route == "/api/resources":
                 try:
                     body = json.dumps(monitor.snapshot()).encode()
@@ -102,6 +126,44 @@ def start_resource_server(allow_reuse=True):
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(body)
+
+        def do_POST(self):
+            origins = ('http://127.0.0.1:8767', 'http://localhost:8767',
+                       'http://127.0.0.1:5173', 'http://localhost:5173')
+            if not self.trusted_host() or self.headers.get('Origin') not in origins:
+                self.json_response(403, {'error': '허용되지 않은 요청입니다'})
+                return
+            if self.headers.get('Content-Type', '').split(';', 1)[0] != 'application/json':
+                self.json_response(415, {'error': 'JSON 요청만 지원합니다'})
+                return
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if length < 1 or length > 4096:
+                    raise ValueError('잘못된 요청 크기입니다')
+                payload = json.loads(self.rfile.read(length))
+                if not isinstance(payload, dict):
+                    raise ValueError('잘못된 요청입니다')
+                token = payload.get('token')
+                if not isinstance(token, str) or not token.isascii() or not hmac.compare_digest(token, maintenance.token):
+                    self.json_response(403, {'error': '요청을 새로 열고 다시 시도하세요'})
+                    return
+                route = urlsplit(self.path).path
+                if route == '/api/maintenance/preview':
+                    result = maintenance.preview(payload.get('target'), payload.get('path', ''), payload.get('days', 7))
+                elif route == '/api/maintenance/execute':
+                    if payload.get('confirmed') is not True or not isinstance(payload.get('previewId'), str):
+                        raise ValueError('정리 대상 확인이 필요합니다')
+                    result = maintenance.execute(payload['previewId'])
+                else:
+                    self.json_response(404, {'error': '지원하지 않는 요청입니다'})
+                    return
+                self.json_response(200, result)
+            except (ValueError, TypeError, json.JSONDecodeError) as error:
+                self.json_response(400, {'error': str(error)})
+            except subprocess.TimeoutExpired:
+                self.json_response(504, {'error': '정리 시간이 초과되었습니다'})
+            except OSError:
+                self.json_response(500, {'error': '캐시 폴더를 읽거나 정리할 수 없습니다'})
 
         def log_message(self, *_):
             pass

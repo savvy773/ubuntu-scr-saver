@@ -53,20 +53,26 @@ After moving an installed folder, run `./install.sh` again to update paths.
 ## Features
 
 - CPU utilization, RAM usage, system disk `/`, and the 1 TB HDD at `/mnt/data`.
-- Used and total capacity in GiB and percentages.
+- Used and remaining capacity in GiB, on separate colored rows below each percentage.
+- Used capacity is warm peach; remaining capacity is sky blue, with larger numerals.
+- RAM remaining uses MemAvailable; disk remaining uses actual available space from the filesystem.
+- Total capacity is available in the capacity tooltip.
 - One wide, high-contrast vertical usage gauge per resource, with quarter-scale marks.
-- Readings update smoothly without clearing the previous values.
+- Readings update smoothly without clearing the previous values. Fixed readout
+  columns, tabular digits, and fixed status badges prevent layout shifts when
+  readings gain a digit or cross a warning threshold.
 - Larger colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
-- A unified monitoring panel uses four aligned cells with subtle dividers.
-- Percentages and gauges form a centered group with a 50-pixel gap.
-- Distinct processor, memory, solid-state drive, and hard-drive icons identify the resources. Capacity details sit directly below each percentage.
+- A unified monitoring panel uses four aligned cells with subtle dividers and
+  10-pixel spacing between resource sections.
+- Percentages and gauges form a centered group with a 40-pixel gap.
+- Distinct processor, memory, solid-state drive, and hard-drive icons identify the resources. Used and remaining capacity sit directly below each percentage.
 - Both percentages and gauges use green for normal usage, amber for watch, and
   red for high usage; status labels accompany the colors.
 - Watch/high defaults: CPU 60/85%, RAM 75/90%, both disks 80/90%.
 - Resource readings refresh three seconds after each completed request.
 - Memory usage excludes available memory; disk percentages match `df`.
 - A disconnected HDD shows as unavailable instead of reporting the root disk.
-- Rounded Nunito clock with date, seconds, and AM/PM; subtle position shifts.
+- Rounded Nunito clock with larger date and weekday text, seconds, and AM/PM; fixed position.
 - A centered two-line English reflection with larger adaptive text, randomly
   rotated every ten minutes.
 - 120 shorter original passages, shuffled without repeats within each cycle.
@@ -82,6 +88,39 @@ with an ellipsis and retain the full passage in the tooltip.
 
 Resource readings work locally. Google Fonts load when available; system fonts
 provide an offline fallback.
+
+## Manual cache maintenance
+
+Open **캐시 관리** in the monitoring panel, choose RAM, SSD, or HDD, and
+preview the targets. Cleanup runs only after checking the confirmation box
+and clicking the execution button. It never runs automatically. Keyboard
+input inside this dialog does not exit the screensaver; Escape closes the dialog.
+
+- **SSD:** Only thumbnail, fontconfig, Mesa shader, and Chrome cache folders
+  under the user's cache directory are eligible. The entire `~/.cache` directory
+  is never selected. Choose files older than 7 days, 30 days, or all ages.
+- **HDD:** Enter an existing thumbnail, fontconfig, Mesa shader, or Chrome cache
+  folder under `/mnt/data`. The HDD must be mounted. Arbitrary `cache` and `tmp`
+  folders, its root, and other filesystems are excluded; the path is remembered locally.
+- **Dependency protection:** uv, pnpm, npm, Yarn, pip, Poetry, Conda, Bun,
+  virtual environments, installed dependency folders, Git, and Codex runtimes
+  are excluded. Folders containing package manifests, lockfiles, or Python
+  environment markers are skipped, including within eligible caches.
+- **RAM:** Manually releases clean Linux file-read and metadata caches using
+  `vm.drop_caches=3`; it does not close applications. Administrator permission
+  is required through noninteractive sudo. Linux normally reclaims these caches
+  itself, and rebuilding them may make subsequent reads slower; see the
+  [kernel drop_caches documentation](https://www.kernel.org/doc/html/latest/admin-guide/sysctl/vm.html#drop-caches).
+
+After cleanup the dashboard refreshes immediately. RAM cleanup reports cache
+size before and after; the RAM usage figure already excludes reclaimable memory,
+so clearing a read cache may produce little change in the displayed percentage.
+The cache button, status area, dialog frame, and clock position stay fixed.
+
+Disk previews expire after ten minutes. Symlinks are excluded, files changed
+since preview are skipped, and directories are retained. The displayed disk
+size is the sum of file sizes; actual recovered space can differ for open files
+or shared filesystem blocks.
 
 ## Commands
 
@@ -103,6 +142,7 @@ readings are available at `/api/resources`. Files are served from `dist/`.
 npm ci
 npm run dev     # Vite with a proxy to the running resource service
 npm run build   # Type check and build production assets
+python3 -m unittest discover -s tests  # Dependency protection using temporary files
 ```
 
 After building, an open screen reloads automatically within the resource refresh
@@ -111,6 +151,8 @@ interval. Restart the service when changing the Python backend.
 - `src/`: TypeScript and CSS.
 - `index.html`: Frontend entry point.
 - `screensaver.py`: Idle monitor, launcher, and resource API.
+- `maintenance.py`: Scoped cache previews and manual cleanup.
+- `src/maintenance.ts`: Cache dialog and confirmation flow.
 - `install.sh`: Builds and installs the desktop shortcut and service.
 - `launch.sh`: Starts the resource service before opening the screensaver.
 - `assets/`: Desktop icon.
