@@ -11,7 +11,7 @@ const thresholds: Record<ResourceName, [number, number]> = {
   const statusEl = document.getElementById('resourceStatus')!;
   const liveEl = document.getElementById('liveLabel')!;
   let frontendVersion: string | undefined;
-  const gib = (bytes: number) => `${(bytes / (1024 ** 3)).toFixed(1)} GiB`;
+  const gib = (bytes: number) => (bytes / (1024 ** 3)).toFixed(1);
   function setText(element: HTMLElement, value: string) {
     if (element.textContent !== value) element.textContent = value;
   }
@@ -49,7 +49,7 @@ const thresholds: Record<ResourceName, [number, number]> = {
         setText(levelEl, { normal: 'NORMAL', warning: 'WATCH', high: 'HIGH' }[level]);
         card.title = `주의 ${warning}% · 높음 ${high}%`;
         setText(valueEl, `${resource.percent.toFixed(1)}%`);
-        if (name !== 'cpu') setText(document.getElementById(`${name}Detail`)!, `${gib(resource.used)} / ${gib(resource.total)}`);
+        if (name !== 'cpu') setText(document.getElementById(`${name}Detail`)!, `${gib(resource.used)} / ${gib(resource.total)} GiB`);
       }
       setText(statusEl, '');
       setText(liveEl, 'LIVE');

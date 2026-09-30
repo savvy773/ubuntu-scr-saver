@@ -56,9 +56,9 @@ After moving an installed folder, run `./install.sh` again to update paths.
 - Used and total capacity in GiB and percentages.
 - One wide, high-contrast vertical usage gauge per resource, with quarter-scale marks.
 - Readings update smoothly without clearing the previous values.
-- Wide gauges sit on the right; colored labels, prominent percentages, and capacity
-  readings fill the remaining card space. Capacity details sit directly below
-  each percentage, followed by the status label.
+- Colored CPU, RAM, SSD, and HDD labels sit at the top, beside a compact status badge.
+- Wide gauges sit on the right; prominent percentages and capacity readings fill
+  the remaining card space. Capacity details sit directly below each percentage.
 - Green indicates normal usage, amber watch, and red high usage; labels accompany colors.
 - Watch/high defaults: CPU 60/85%, RAM 75/90%, both disks 80/90%.
 - Resource readings refresh three seconds after each completed request.
