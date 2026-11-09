@@ -193,11 +193,32 @@ def is_screensaver_running():
         PID_FILE.unlink(missing_ok=True)
         return False
 
+def run_window(cmd):
+    """Run the screensaver window, tracking its PID; return its exit code."""
+    proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    PID_FILE.write_text(str(proc.pid))
+    try:
+        return proc.wait()
+    except KeyboardInterrupt:
+        proc.terminate()
+        return proc.wait()
+    finally:
+        PID_FILE.unlink(missing_ok=True)
+
+
 def launch_screensaver():
-    """Launch the modern clock screensaver in Chrome Kiosk mode."""
+    """Launch the clock screensaver in WebKitGTK, falling back to a Chrome kiosk."""
     if is_screensaver_running():
         print("[Screensaver] Already running.")
         return
+
+    print("[Screensaver] Launching modern clock screensaver...")
+    # WebKitGTK uses far less RAM than Chrome; exit code 3 = not installed.
+    if os.environ.get("SCR_SAVER_BROWSER", "webkit") != "chrome":
+        if run_window([sys.executable, str(BASE_DIR / "webview.py"), f"{SERVER_URL}/"]) != 3:
+            print("[Screensaver] Exited.")
+            return
+        print("[Screensaver] WebKitGTK unavailable; falling back to Chrome.")
 
     cmd = [
         "google-chrome",
@@ -230,17 +251,8 @@ def launch_screensaver():
     for cache in ("Default/Cache", "Default/Code Cache", "Default/GPUCache", "GrShaderCache", "ShaderCache"):
         shutil.rmtree(PROFILE_DIR / cache, ignore_errors=True)
 
-    print("[Screensaver] Launching modern clock screensaver...")
-    proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    PID_FILE.write_text(str(proc.pid))
-
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        proc.terminate()
-    finally:
-        PID_FILE.unlink(missing_ok=True)
-        print("[Screensaver] Exited.")
+    run_window(cmd)
+    print("[Screensaver] Exited.")
 
 def get_gnome_idletime_ms():
     """Query GNOME Mutter IdleMonitor via gdbus."""

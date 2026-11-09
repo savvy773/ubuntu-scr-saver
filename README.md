@@ -31,7 +31,8 @@ restrained accents and generous margins.
 
 ## Install
 
-Requires Ubuntu GNOME, Python 3.10+, Google Chrome, and a Node.js version
+Requires Ubuntu GNOME, Python 3.10+, WebKitGTK (`gir1.2-webkit2-4.1`; Google Chrome is the
+fallback, or force it with `SCR_SAVER_BROWSER=chrome`), and a Node.js version
 supported by Vite (20.19+ or 22.12+).
 
 ```bash

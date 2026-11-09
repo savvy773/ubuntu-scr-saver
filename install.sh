@@ -3,9 +3,12 @@ set -euo pipefail
 
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd -- "$project_dir"
-for dependency in python3 npm google-chrome systemctl; do
+for dependency in python3 npm systemctl; do
   command -v "$dependency" >/dev/null || { echo "Missing dependency: $dependency" >&2; exit 1; }
 done
+/usr/bin/python3 -c "import gi; gi.require_version('Gtk', '3.0'); gi.require_version('WebKit2', '4.1')" 2>/dev/null \
+  || command -v google-chrome >/dev/null \
+  || { echo "Missing WebKitGTK (sudo apt install gir1.2-webkit2-4.1) or google-chrome" >&2; exit 1; }
 npm ci
 npm run build
 
@@ -41,7 +44,7 @@ RestartSec=5
 Environment=DISPLAY=:0
 Environment=WAYLAND_DISPLAY=wayland-0
 Environment=XDG_CURRENT_DESKTOP=ubuntu:GNOME
-# Prod host: the idle-launched Chrome kiosk runs in this cgroup. Keep it
+# Prod host: the idle-launched screensaver window runs in this cgroup. Keep it
 # below the prism containers for CPU/IO and first in line for the OOM killer.
 Nice=10
 CPUWeight=20
