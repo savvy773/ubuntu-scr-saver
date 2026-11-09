@@ -37,6 +37,9 @@ def main(url):
     view = WebKit2.WebView.new_with_context(context)
     settings = view.get_settings()
     settings.set_enable_page_cache(False)
+    # GL compositing under XWayland flickers now and then; this small page
+    # paints in software for ~1% CPU without GL buffer swaps.
+    settings.set_hardware_acceleration_policy(WebKit2.HardwareAccelerationPolicy.NEVER)
     settings.set_enable_developer_extras(False)
     view.set_background_color(Gdk.RGBA(0, 0, 0, 1))
 
