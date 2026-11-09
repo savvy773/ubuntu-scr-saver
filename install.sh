@@ -31,6 +31,7 @@ script = str(project / 'screensaver.py').replace('\\', '\\\\').replace('"', '\\"
 (unit_dir / 'screensaver.service').write_text(f'''[Unit]
 Description=scr-saver clock and resource dashboard
 After=graphical-session.target
+PartOf=graphical-session.target
 
 [Service]
 Type=simple
@@ -40,9 +41,17 @@ RestartSec=5
 Environment=DISPLAY=:0
 Environment=WAYLAND_DISPLAY=wayland-0
 Environment=XDG_CURRENT_DESKTOP=ubuntu:GNOME
+# Prod host: the idle-launched Chrome kiosk runs in this cgroup. Keep it
+# below the prism containers for CPU/IO and first in line for the OOM killer.
+Nice=10
+CPUWeight=20
+IOWeight=20
+OOMScoreAdjust=500
+MemoryHigh=1G
+MemoryMax=1536M
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
 ''')
 
 try:

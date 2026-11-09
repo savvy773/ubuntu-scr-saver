@@ -4,6 +4,10 @@ body {
   height: 100vh; height: 100dvh; overflow: hidden; cursor: default;
   background: radial-gradient(ellipse at 50% 20%, #18202d55, transparent 65%), #090c11;
 }
+html.night-black, html.night-black body { background: #000; }
+html.night-black, html.night-black * { cursor: none !important; }
+html.night-black body > * { visibility: hidden !important; pointer-events: none; }
+html.night-black dialog::backdrop { background: #000; }
 .screen-grid {
   width: 100%; max-width: 1600px; height: 100%; margin: 0 auto;
   display: grid; grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -35,7 +39,7 @@ body {
 .seconds-wrap { display: inline-flex; flex-direction: column; align-items: flex-start; margin-left: 0.5em; font-size: 0.24em; color: #a8bad2; letter-spacing: -0.02em; }
 .ampm { font-size: 0.3em; margin-top: 0.7em; letter-spacing: 0.15em; color: #78879b; }
 .progress-bar-container { width: min(220px, 45%); height: 2px; margin: 30px auto 0; border-radius: 2px; overflow: hidden; background: #ffffff09; }
-.progress-bar { height: 100%; background: #829bbf; width: 0; transition: width 1s linear; }
+.progress-bar { height: 100%; background: #829bbf; transform: scaleX(0); transform-origin: left; transition: transform 1s linear; }
 .quote-content {
   height: 144px; max-width: 1160px; margin: 0 auto; padding: 12px 24px;
   display: flex; align-items: center; justify-content: center;

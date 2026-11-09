@@ -46,6 +46,16 @@ screensaver after 30 minutes of inactivity. Click the desktop icon to open it
 at any time; press a key to exit. The mouse pointer stays visible; mouse movement,
 clicks, and touch do not close the screensaver.
 
+While the screensaver is open, it shows a completely black screen (including
+the pointer) from 18:10 until 06:00 in the computer's local timezone. At 06:00,
+the clock dashboard returns automatically. During the black period, the first
+keypress restores the dashboard without exiting or activating a control;
+release the key and press again to use the usual keyboard behavior (exit,
+or interact with an open maintenance dialog). Holding the first key does not
+exit. The restored dashboard stays visible for the rest of that night in the
+current window, including automatic frontend reloads. A new screensaver window
+during the night starts black again; the next evening also resets black mode.
+
 The local installation is `/home/suby/code/scr-saver`. The installer records
 the current project path so it also works when cloned into another folder.
 After moving an installed folder, run `./install.sh` again to update paths.
@@ -142,6 +152,7 @@ readings are available at `/api/resources`. Files are served from `dist/`.
 npm ci
 npm run dev     # Vite with a proxy to the running resource service
 npm run build   # Type check and build production assets
+npm test        # Night schedule and keyboard wake/exit behavior
 python3 -m unittest discover -s tests  # Dependency protection using temporary files
 ```
 

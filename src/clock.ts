@@ -38,23 +38,9 @@ export {};
       setText(dayBadgeEl, `${daysKo[now.getDay()]} / ${daysEn[now.getDay()]}`);
 
       // 프로그레스 바 (초 단위)
-      const progressPercent = ((s + ms / 1000) / 60) * 100;
-      progressBarEl.style.width = `${progressPercent}%`;
+      // transform stays on the compositor; width would relayout every second.
+      progressBarEl.style.transform = `scaleX(${(s + ms / 1000) / 60})`;
     }
 
     setInterval(updateTime, 1000);
     updateTime();
-
-    // 시작 직후의 키 입력을 무시하고, 키보드 입력으로만 종료합니다.
-    let ready = false;
-
-    setTimeout(() => {
-      ready = true;
-    }, 800);
-
-    function exitScreensaver() {
-      if (!ready || document.querySelector('dialog[open]')) return;
-      window.close();
-    }
-
-    window.addEventListener('keydown', exitScreensaver);

@@ -209,8 +209,26 @@ def launch_screensaver():
         "--disable-extensions",
         "--disable-component-update",
         "--hide-scrollbars",
+        # /tmp is tmpfs: keep the profile (localStorage) but cap caches and
+        # skip background downloads that only grow RAM-backed profile files.
+        "--disk-cache-size=1048576",
+        "--media-cache-size=1048576",
+        "--aggressive-cache-discard",
+        "--disable-background-networking",
+        "--disable-default-apps",
+        "--disable-breakpad",
+        "--disable-domain-reliability",
+        "--disable-client-side-phishing-detection",
+        "--no-pings",
+        "--renderer-process-limit=1",
+        "--disable-features=Translate,OptimizationHints,MediaRouter,"
+        "SpareRendererForSitePerProcess,AutofillServerCommunication,"
+        "CertificateTransparencyComponentUpdater",
         f"{SERVER_URL}/"
     ]
+
+    for cache in ("Default/Cache", "Default/Code Cache", "Default/GPUCache", "GrShaderCache", "ShaderCache"):
+        shutil.rmtree(PROFILE_DIR / cache, ignore_errors=True)
 
     print("[Screensaver] Launching modern clock screensaver...")
     proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
