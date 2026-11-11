@@ -10,6 +10,8 @@ export {};
     const dayBadgeEl = document.getElementById('dayBadge')!;
     const progressBarEl = document.getElementById('progressBar')!;
 
+    let lastProgress = 0;
+
     function setText(element: HTMLElement, text: string) {
       if (element.textContent !== text) element.textContent = text;
     }
@@ -39,7 +41,17 @@ export {};
 
       // 프로그레스 바 (초 단위)
       // transform stays on the compositor; width would relayout every second.
-      progressBarEl.style.transform = `scaleX(${(s + ms / 1000) / 60})`;
+      const progress = (s + ms / 1000) / 60;
+      // At the minute wrap, jump to the start instead of animating backwards.
+      if (progress < lastProgress) {
+        progressBarEl.style.transition = 'none';
+        progressBarEl.style.transform = `scaleX(${progress})`;
+        void progressBarEl.offsetWidth;
+        progressBarEl.style.transition = '';
+      } else {
+        progressBarEl.style.transform = `scaleX(${progress})`;
+      }
+      lastProgress = progress;
     }
 
     setInterval(updateTime, 1000);

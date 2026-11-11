@@ -57,6 +57,25 @@ MemoryMax=1536M
 WantedBy=graphical-session.target
 ''')
 
+lock = str(project / 'session_lock.py').replace('\\', '\\\\').replace('"', '\\"').replace('%', '%%')
+(unit_dir / 'screensaver-lock.service').write_text(f'''[Unit]
+Description=scr-saver: lock the idle desk outside work hours (SSH is unaffected)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 "{lock}" --auto
+''')
+(unit_dir / 'screensaver-lock.timer').write_text('''[Unit]
+Description=scr-saver: check every 5 minutes whether to lock the desk
+
+[Timer]
+OnCalendar=*:0/5
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target
+''')
+
 try:
     desktop = Path(subprocess.check_output(['xdg-user-dir', 'DESKTOP'], text=True).strip())
 except (FileNotFoundError, subprocess.CalledProcessError):
@@ -87,4 +106,5 @@ PY
 systemctl --user daemon-reload
 systemctl --user enable screensaver.service
 systemctl --user restart screensaver.service
-echo 'Installed: desktop shortcut and 30-minute idle screensaver.'
+systemctl --user enable --now screensaver-lock.timer
+echo 'Installed: desktop shortcut, 30-minute idle screensaver, and off-hours desk lock.'

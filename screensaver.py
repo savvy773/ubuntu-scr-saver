@@ -20,6 +20,7 @@ from urllib.parse import unquote, urlsplit
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from maintenance import CacheMaintenance
+from session_lock import is_locked
 
 BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR / "dist"
@@ -282,7 +283,9 @@ def run_idle_daemon(idle_limit_sec=1800, check_interval_sec=5):
         try:
             if not is_screensaver_running():
                 idle_ms = get_gnome_idletime_ms()
-                if idle_ms >= idle_limit_ms:
+                # Behind the lock screen the dashboard is invisible, and unlocking
+                # would reveal it only for its key exit to lock the desk again.
+                if idle_ms >= idle_limit_ms and not is_locked():
                     print(f"[Daemon] Idle reached ({idle_ms // 1000}s). Activating screensaver...")
                     launch_screensaver()
             time.sleep(check_interval_sec)

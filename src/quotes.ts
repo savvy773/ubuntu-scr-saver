@@ -94,7 +94,8 @@ function renderQuote(element: HTMLElement, text: string, verbs: string) {
   }
   element.title = text;
   element.replaceChildren(fragment);
-  requestAnimationFrame(() => fitQuote(element));
+  // Fit before the next paint so a new quote never shows one frame at the wrong size.
+  fitQuote(element);
 }
 
 const quoteElement = document.getElementById('quoteText')!;

@@ -44,7 +44,7 @@ cd ubuntu-scr-saver
 The installer builds the frontend, adds a **scr-saver** desktop shortcut and
 application entry, and enables `screensaver.service`. The service opens the
 screensaver after 30 minutes of inactivity. Click the desktop icon to open it
-at any time; press a key to exit. The mouse pointer stays visible; mouse movement,
+at any time; press a key to exit; outside work hours (weekdays `07:00-18:00` via `SCR_SAVER_WORK_HOURS`; weekends and dates in `holidays.txt` are off all day) the desktop then locks (set `SCR_SAVER_LOCK_ON_EXIT=0` to never lock). A service stop or restart does not lock. Outside work hours, `screensaver-lock.timer` also locks the desk after 10 idle minutes (`SCR_SAVER_AUTOLOCK_IDLE`) unless the screensaver is open. The idle screensaver does not open while the desk is locked. Only the monitor session is locked; SSH and services keep running. The mouse pointer stays visible; mouse movement,
 clicks, and touch do not close the screensaver.
 
 While the screensaver is open, it shows a completely black screen (including

@@ -5,6 +5,18 @@
   <meta name="google" content="notranslate">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>scr-saver · System Dashboard</title>
+  <script>
+    // Apply night blackout before first paint; src/screen-mode.ts owns the logic afterwards.
+    (function () {
+      var now = new Date(), m = now.getHours() * 60 + now.getMinutes();
+      if (m >= 360 && m < 1090) return;
+      var start = new Date(now);
+      if (m < 360) start.setDate(start.getDate() - 1);
+      var night = start.getFullYear() + '-' + (start.getMonth() + 1) + '-' + start.getDate(), restored = null;
+      try { restored = sessionStorage.getItem('screensaver-night-override'); } catch (e) {}
+      if (restored !== night) document.documentElement.classList.add('night-black');
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400&family=Outfit:wght@200;300;400;600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
